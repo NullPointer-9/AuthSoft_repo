@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Legado.Dados\Legado.Dados.csproj" />
+    <ProjectReference Include="..\Legado.Negocio\Legado.Negocio.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using Legado.Negocio;
 
 namespace Legado.Dados
 {
-    public class ClienteRepositorio
+    public class ClienteRepositorio : IClienteRepositorio
     {
         private readonly string _conexao;
 
@@ -39,39 +40,46 @@ namespace Legado.Dados
             return clientes;
         }
 
-        public int ContarPorCpf(string cpf)
+        public bool ExisteCpf(string cpfSomenteDigitos, int ignorarIdCliente)
         {
+            // O banco tem "529.982.247-25" e "52998224725": compara sem a pontuação.
+            const string sql = @"
+select count(*) from tb_cliente
+where replace(replace(replace(cpf, '.', ''), '-', ''), ' ', '') = @cpf
+  and id <> @ignorar";
+
             using (var con = new SqlConnection(_conexao))
-            using (var cmd = new SqlCommand("select count(*) from tb_cliente where cpf = @cpf", con))
+            using (var cmd = new SqlCommand(sql, con))
             {
-                cmd.Parameters.Add("@cpf", SqlDbType.VarChar, 20).Value = cpf;
+                cmd.Parameters.Add("@cpf", SqlDbType.VarChar, 20).Value = cpfSomenteDigitos;
+                cmd.Parameters.Add("@ignorar", SqlDbType.Int).Value = ignorarIdCliente;
                 con.Open();
-                return (int)cmd.ExecuteScalar();
+                return (int)cmd.ExecuteScalar() > 0;
             }
         }
 
         public void Inserir(Cliente cliente)
         {
-            Executar("insert into tb_cliente (nome, cpf, telefone) values (@nome, @cpf, @telefone)", cliente);
+            Executar("insert into tb_cliente (nome, cpf, telefone) values (@nome, @cpf, @telefone); select cast(scope_identity() as int)", cliente, novoId => cliente.Id = novoId);
         }
 
         public void Atualizar(Cliente cliente)
         {
-            Executar("update tb_cliente set nome = @nome, cpf = @cpf, telefone = @telefone where id = @id", cliente);
+            Executar("update tb_cliente set nome = @nome, cpf = @cpf, telefone = @telefone where id = @id", cliente, null);
         }
 
-        public void Excluir(int id)
+        public void Excluir(int idCliente)
         {
             using (var con = new SqlConnection(_conexao))
             using (var cmd = new SqlCommand("delete from tb_cliente where id = @id", con))
             {
-                cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                cmd.Parameters.Add("@id", SqlDbType.Int).Value = idCliente;
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
         }
 
-        private void Executar(string sql, Cliente cliente)
+        private void Executar(string sql, Cliente cliente, Action<int> aoGerarId)
         {
             using (var con = new SqlConnection(_conexao))
             using (var cmd = new SqlCommand(sql, con))
@@ -81,7 +89,11 @@ namespace Legado.Dados
                 cmd.Parameters.Add("@cpf", SqlDbType.VarChar, 20).Value = cliente.Cpf;
                 cmd.Parameters.Add("@telefone", SqlDbType.VarChar, 30).Value = (object)cliente.Telefone ?? DBNull.Value;
                 con.Open();
-                cmd.ExecuteNonQuery();
+
+                if (aoGerarId == null)
+                    cmd.ExecuteNonQuery();
+                else
+                    aoGerarId((int)cmd.ExecuteScalar());
             }
         }
     }

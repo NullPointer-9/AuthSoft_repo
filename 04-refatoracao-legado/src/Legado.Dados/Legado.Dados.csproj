@@ -9,4 +9,8 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Legado.Negocio\Legado.Negocio.csproj" />
+  </ItemGroup>
+
 </Project>

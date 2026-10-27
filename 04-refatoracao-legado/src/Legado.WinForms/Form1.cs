@@ -2,13 +2,14 @@ using System;
 using System.Configuration;
 using System.Windows.Forms;
 using Legado.Dados;
+using Legado.Negocio;
 
 namespace Legado.WinForms
 {
     public partial class Form1 : Form
     {
-        readonly ClienteRepositorio clientes;
-        readonly PedidoRepositorio pedidos;
+        readonly ClienteServico clientes;
+        readonly PedidoServico pedidos;
         int idClienteSelecionado = 0;
 
         public Form1()
@@ -16,42 +17,50 @@ namespace Legado.WinForms
             InitializeComponent();
 
             var conexao = ConfigurationManager.ConnectionStrings["LegadoCartorio"].ConnectionString;
-            clientes = new ClienteRepositorio(conexao);
-            pedidos = new PedidoRepositorio(conexao);
+            var clienteRepositorio = new ClienteRepositorio(conexao);
+            var pedidoRepositorio = new PedidoRepositorio(conexao);
+            clientes = new ClienteServico(clienteRepositorio, pedidoRepositorio);
+            pedidos = new PedidoServico(pedidoRepositorio, new RelogioSistema());
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            comboBox1.Items.Add("Certidao de nascimento");
-            comboBox1.Items.Add("Certidao de casamento");
-            comboBox1.Items.Add("Certidao de obito");
+            // A ordem dos itens segue o enum TipoCertidao.
+            foreach (TipoCertidao tipo in Enum.GetValues(typeof(TipoCertidao)))
+                comboBox1.Items.Add(FormatosLegados.DescricaoTipo(tipo));
             comboBox1.SelectedIndex = 0;
             CarregarClientes("");
         }
 
-        void CarregarClientes(string filtro)
+        /// <summary>Regra violada vira aviso; qualquer outra coisa vira erro.</summary>
+        void Executar(Action acao)
         {
             try
             {
-                dataGridView1.DataSource = clientes.BuscarPorNome(filtro);
+                acao();
+            }
+            catch (NegocioException ex)
+            {
+                MessageBox.Show(ex.Message, "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro: " + ex.Message);
+                MessageBox.Show("Erro: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        void CarregarClientes(string filtro)
+        {
+            Executar(() => dataGridView1.DataSource = clientes.Buscar(filtro));
         }
 
         void CarregarPedidos()
         {
-            try
+            Executar(() =>
             {
                 dataGridView2.DataSource = pedidos.ListarPorCliente(idClienteSelecionado);
-                label5.Text = "Total em aberto: R$ " + pedidos.TotalEmAberto(idClienteSelecionado).ToString("N2");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro: " + ex.Message);
-            }
+                label5.Text = "Total em aberto: " + pedidos.TotalEmAberto(idClienteSelecionado).ToString("C");
+            });
         }
 
         PedidoCertidao PedidoSelecionado()
@@ -83,99 +92,43 @@ namespace Legado.WinForms
             textBox3.Text = "";
             textBox4.Text = "";
             dataGridView2.DataSource = null;
-            label5.Text = "Total em aberto: R$ 0,00";
+            label5.Text = "Total em aberto: " + 0m.ToString("C");
         }
 
         // salvar cliente
         private void button2_Click(object sender, EventArgs e)
         {
-            if (textBox2.Text == "")
+            Executar(() =>
             {
-                MessageBox.Show("Preencha o nome");
-                return;
-            }
-            if (textBox3.Text.Length < 11)
-            {
-                MessageBox.Show("CPF invalido");
-                return;
-            }
-
-            try
-            {
-                var cliente = new Cliente { Id = idClienteSelecionado, Nome = textBox2.Text, Cpf = textBox3.Text, Telefone = textBox4.Text };
-                if (idClienteSelecionado == 0)
-                {
-                    if (clientes.ContarPorCpf(textBox3.Text) > 0)
-                    {
-                        MessageBox.Show("CPF ja cadastrado");
-                        return;
-                    }
-                    clientes.Inserir(cliente);
-                    MessageBox.Show("Cliente salvo!");
-                }
-                else
-                {
-                    clientes.Atualizar(cliente);
-                    MessageBox.Show("Cliente alterado!");
-                }
+                var novo = idClienteSelecionado == 0;
+                clientes.Salvar(idClienteSelecionado, textBox2.Text, textBox3.Text, textBox4.Text);
+                MessageBox.Show(novo ? "Cliente salvo!" : "Cliente alterado!");
                 CarregarClientes("");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro: " + ex.Message);
-            }
+            });
         }
 
         // excluir cliente
         private void button3_Click(object sender, EventArgs e)
         {
             if (idClienteSelecionado == 0) return;
-            if (MessageBox.Show("Deseja excluir o cliente?", "Excluir", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Deseja excluir o cliente?", "Excluir", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+
+            Executar(() =>
             {
-                try
-                {
-                    clientes.Excluir(idClienteSelecionado);
-                    button7_Click(null, null);
-                    CarregarClientes("");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Erro: " + ex.Message);
-                }
-            }
+                clientes.Excluir(idClienteSelecionado);
+                button7_Click(null, null);
+                CarregarClientes("");
+            });
         }
 
         // novo pedido
         private void button4_Click(object sender, EventArgs e)
         {
-            if (idClienteSelecionado == 0)
+            Executar(() =>
             {
-                MessageBox.Show("Selecione um cliente");
-                return;
-            }
-
-            double valor = 0;
-            if (comboBox1.Text == "Certidao de nascimento") valor = 45.9;
-            else if (comboBox1.Text == "Certidao de casamento") valor = 45.9;
-            else if (comboBox1.Text == "Certidao de obito") valor = 52.35;
-            if (checkBox1.Checked) valor = valor * 1.5; // urgente
-
-            try
-            {
-                pedidos.Inserir(new PedidoCertidao
-                {
-                    IdCliente = idClienteSelecionado,
-                    Tipo = comboBox1.Text,
-                    Valor = valor,
-                    Status = "aberto",
-                    DataPedido = DateTime.Now.ToString("dd/MM/yyyy")
-                });
+                pedidos.Criar(idClienteSelecionado, (TipoCertidao)comboBox1.SelectedIndex, checkBox1.Checked);
                 CarregarPedidos();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro: " + ex.Message);
-            }
+            });
         }
 
         // marcar pago
@@ -183,13 +136,11 @@ namespace Legado.WinForms
         {
             var pedido = PedidoSelecionado();
             if (pedido == null) return;
-            if (pedido.Status != "aberto")
+            Executar(() =>
             {
-                MessageBox.Show("Pedido nao esta em aberto");
-                return;
-            }
-
-            AtualizarStatus(pedido.Id, "pago");
+                pedidos.MarcarPago(pedido.Id);
+                CarregarPedidos();
+            });
         }
 
         // entregar
@@ -197,26 +148,11 @@ namespace Legado.WinForms
         {
             var pedido = PedidoSelecionado();
             if (pedido == null) return;
-            if (pedido.Status == "entregue")
+            Executar(() =>
             {
-                MessageBox.Show("Pedido ja foi entregue");
-                return;
-            }
-
-            AtualizarStatus(pedido.Id, "entregue");
-        }
-
-        void AtualizarStatus(int idPedido, string novoStatus)
-        {
-            try
-            {
-                pedidos.AtualizarStatus(idPedido, novoStatus);
+                pedidos.Entregar(pedido.Id);
                 CarregarPedidos();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro: " + ex.Message);
-            }
+            });
         }
     }
 }

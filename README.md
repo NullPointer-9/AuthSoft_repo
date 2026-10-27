@@ -1,5 +1,7 @@
 # Projetos de portfólio
 
+[![CI](https://github.com/NullPointer-9/AuthSoft_repo/actions/workflows/ci.yml/badge.svg)](https://github.com/NullPointer-9/AuthSoft_repo/actions/workflows/ci.yml)
+
 Quatro projetos em C# com .NET Framework 4.8, WinForms e SQL Server, voltados para sistemas de cartório.
 
 | Projeto | Conteúdo |
@@ -31,6 +33,10 @@ dotnet test src/Emolumentos.sln
 ```
 
 Cada banco usa uma porta diferente (14331 a 14334, e 54333 para o PostgreSQL), então os quatro podem rodar ao mesmo tempo. O README de cada projeto traz os detalhes.
+
+## CI e releases
+
+A cada push e pull request, o GitHub Actions compila e testa os quatro projetos no Windows (`.github/workflows/ci.yml`). Ao criar uma tag `v*`, o workflow de release gera os executáveis em Release e publica um zip por aplicativo na página de [Releases](https://github.com/NullPointer-9/AuthSoft_repo/releases).
 
 ## Branches
 

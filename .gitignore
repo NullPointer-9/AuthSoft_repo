@@ -8,6 +8,9 @@ TestResults/
 *.suo
 *.cache
 
+# Zips gerados por .github/empacotar.ps1
+pacotes/
+
 # Configuração local de editor
 .vscode/
 

@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  build:
+    name: ${{ matrix.projeto }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - projeto: 01-calculadora-emolumentos
+            solucao: 01-calculadora-emolumentos/src/Emolumentos.sln
+          - projeto: 02-protocolo-cartorio
+            solucao: 02-protocolo-cartorio/src/Cartorio.sln
+          - projeto: 03-migracoes-idempotentes
+            solucao: 03-migracoes-idempotentes/src/Migrador.sln
+          - projeto: 04-refatoracao-legado
+            solucao: 04-refatoracao-legado/src/Legado.sln
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Compilar
+        run: dotnet build ${{ matrix.solucao }} -c Release
+
+      # Os testes de integração do projeto 3 precisam dos bancos do Docker e ficam como inconclusivos aqui.
+      - name: Testar
+        run: dotnet test ${{ matrix.solucao }} -c Release --no-build

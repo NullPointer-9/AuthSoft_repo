@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Baixar a versão refatorada do balcão
+        uses: actions/checkout@v4
+        with:
+          ref: refatoracao/05-emissao-documentos
+          path: balcao-refatorado
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Testar
+        shell: pwsh
+        run: |
+          foreach ($sln in '01-calculadora-emolumentos/src/Emolumentos.sln',
+                           '02-protocolo-cartorio/src/Cartorio.sln',
+                           '03-migracoes-idempotentes/src/Migrador.sln',
+                           'balcao-refatorado/04-refatoracao-legado/src/Legado.sln') {
+            dotnet test $sln -c Release
+            if ($LASTEXITCODE -ne 0) { exit 1 }
+          }
+
+      - name: Empacotar
+        shell: pwsh
+        run: ./.github/empacotar.ps1 -Versao '${{ github.ref_name }}' -BalcaoRefatorado ./balcao-refatorado
+
+      - name: Publicar release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          body_path: .github/notas-release.md
+          files: pacotes/*.zip

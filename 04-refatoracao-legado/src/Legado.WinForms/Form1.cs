@@ -1,19 +1,23 @@
 using System;
-using System.Data;
-using System.Data.SqlClient;
+using System.Configuration;
 using System.Windows.Forms;
+using Legado.Dados;
 
 namespace Legado.WinForms
 {
     public partial class Form1 : Form
     {
-        // TODO: mover para o config
-        string conexao = "Data Source=localhost,14334;Initial Catalog=LegadoCartorio;User ID=sa;Password=Cartorio@2026";
+        readonly ClienteRepositorio clientes;
+        readonly PedidoRepositorio pedidos;
         int idClienteSelecionado = 0;
 
         public Form1()
         {
             InitializeComponent();
+
+            var conexao = ConfigurationManager.ConnectionStrings["LegadoCartorio"].ConnectionString;
+            clientes = new ClienteRepositorio(conexao);
+            pedidos = new PedidoRepositorio(conexao);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -29,13 +33,7 @@ namespace Legado.WinForms
         {
             try
             {
-                SqlConnection con = new SqlConnection(conexao);
-                con.Open();
-                SqlDataAdapter da = new SqlDataAdapter("select id, nome, cpf, telefone from tb_cliente where nome like '%" + filtro + "%' order by nome", con);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                dataGridView1.DataSource = dt;
-                con.Close();
+                dataGridView1.DataSource = clientes.BuscarPorNome(filtro);
             }
             catch (Exception ex)
             {
@@ -47,25 +45,18 @@ namespace Legado.WinForms
         {
             try
             {
-                SqlConnection con = new SqlConnection(conexao);
-                con.Open();
-                SqlDataAdapter da = new SqlDataAdapter("select id, tipo, valor, status, dt_pedido from tb_pedido_certidao where id_cliente = " + idClienteSelecionado + " order by id", con);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                dataGridView2.DataSource = dt;
-
-                SqlCommand cmd = new SqlCommand("select sum(valor) from tb_pedido_certidao where id_cliente = " + idClienteSelecionado + " and status = 'aberto'", con);
-                object total = cmd.ExecuteScalar();
-                if (total == DBNull.Value)
-                    label5.Text = "Total em aberto: R$ 0,00";
-                else
-                    label5.Text = "Total em aberto: R$ " + Convert.ToDouble(total).ToString("N2");
-                con.Close();
+                dataGridView2.DataSource = pedidos.ListarPorCliente(idClienteSelecionado);
+                label5.Text = "Total em aberto: R$ " + pedidos.TotalEmAberto(idClienteSelecionado).ToString("N2");
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Erro: " + ex.Message);
             }
+        }
+
+        PedidoCertidao PedidoSelecionado()
+        {
+            return dataGridView2.CurrentRow?.DataBoundItem as PedidoCertidao;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -76,10 +67,11 @@ namespace Legado.WinForms
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
-            idClienteSelecionado = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[0].Value);
-            textBox2.Text = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
-            textBox3.Text = dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString();
-            textBox4.Text = dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString();
+            var cliente = (Cliente)dataGridView1.Rows[e.RowIndex].DataBoundItem;
+            idClienteSelecionado = cliente.Id;
+            textBox2.Text = cliente.Nome;
+            textBox3.Text = cliente.Cpf;
+            textBox4.Text = cliente.Telefone;
             CarregarPedidos();
         }
 
@@ -110,29 +102,22 @@ namespace Legado.WinForms
 
             try
             {
-                SqlConnection con = new SqlConnection(conexao);
-                con.Open();
+                var cliente = new Cliente { Id = idClienteSelecionado, Nome = textBox2.Text, Cpf = textBox3.Text, Telefone = textBox4.Text };
                 if (idClienteSelecionado == 0)
                 {
-                    SqlCommand cmd = new SqlCommand("select count(*) from tb_cliente where cpf = '" + textBox3.Text + "'", con);
-                    int qtd = (int)cmd.ExecuteScalar();
-                    if (qtd > 0)
+                    if (clientes.ContarPorCpf(textBox3.Text) > 0)
                     {
                         MessageBox.Show("CPF ja cadastrado");
-                        con.Close();
                         return;
                     }
-                    cmd = new SqlCommand("insert into tb_cliente (nome, cpf, telefone) values ('" + textBox2.Text + "', '" + textBox3.Text + "', '" + textBox4.Text + "')", con);
-                    cmd.ExecuteNonQuery();
+                    clientes.Inserir(cliente);
                     MessageBox.Show("Cliente salvo!");
                 }
                 else
                 {
-                    SqlCommand cmd = new SqlCommand("update tb_cliente set nome = '" + textBox2.Text + "', cpf = '" + textBox3.Text + "', telefone = '" + textBox4.Text + "' where id = " + idClienteSelecionado, con);
-                    cmd.ExecuteNonQuery();
+                    clientes.Atualizar(cliente);
                     MessageBox.Show("Cliente alterado!");
                 }
-                con.Close();
                 CarregarClientes("");
             }
             catch (Exception ex)
@@ -149,11 +134,7 @@ namespace Legado.WinForms
             {
                 try
                 {
-                    SqlConnection con = new SqlConnection(conexao);
-                    con.Open();
-                    SqlCommand cmd = new SqlCommand("delete from tb_cliente where id = " + idClienteSelecionado, con);
-                    cmd.ExecuteNonQuery();
-                    con.Close();
+                    clientes.Excluir(idClienteSelecionado);
                     button7_Click(null, null);
                     CarregarClientes("");
                 }
@@ -181,11 +162,14 @@ namespace Legado.WinForms
 
             try
             {
-                SqlConnection con = new SqlConnection(conexao);
-                con.Open();
-                SqlCommand cmd = new SqlCommand("insert into tb_pedido_certidao (id_cliente, tipo, valor, status, dt_pedido) values (" + idClienteSelecionado + ", '" + comboBox1.Text + "', " + valor.ToString().Replace(",", ".") + ", 'aberto', '" + DateTime.Now.ToString("dd/MM/yyyy") + "')", con);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                pedidos.Inserir(new PedidoCertidao
+                {
+                    IdCliente = idClienteSelecionado,
+                    Tipo = comboBox1.Text,
+                    Valor = valor,
+                    Status = "aberto",
+                    DataPedido = DateTime.Now.ToString("dd/MM/yyyy")
+                });
                 CarregarPedidos();
             }
             catch (Exception ex)
@@ -197,49 +181,36 @@ namespace Legado.WinForms
         // marcar pago
         private void button5_Click(object sender, EventArgs e)
         {
-            if (dataGridView2.CurrentRow == null) return;
-            int idPedido = Convert.ToInt32(dataGridView2.CurrentRow.Cells[0].Value);
-            string status = dataGridView2.CurrentRow.Cells[3].Value.ToString();
-            if (status != "aberto")
+            var pedido = PedidoSelecionado();
+            if (pedido == null) return;
+            if (pedido.Status != "aberto")
             {
                 MessageBox.Show("Pedido nao esta em aberto");
                 return;
             }
 
-            try
-            {
-                SqlConnection con = new SqlConnection(conexao);
-                con.Open();
-                SqlCommand cmd = new SqlCommand("update tb_pedido_certidao set status = 'pago' where id = " + idPedido, con);
-                cmd.ExecuteNonQuery();
-                con.Close();
-                CarregarPedidos();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro: " + ex.Message);
-            }
+            AtualizarStatus(pedido.Id, "pago");
         }
 
         // entregar
         private void button6_Click(object sender, EventArgs e)
         {
-            if (dataGridView2.CurrentRow == null) return;
-            int idPedido = Convert.ToInt32(dataGridView2.CurrentRow.Cells[0].Value);
-            string status = dataGridView2.CurrentRow.Cells[3].Value.ToString();
-            if (status == "entregue")
+            var pedido = PedidoSelecionado();
+            if (pedido == null) return;
+            if (pedido.Status == "entregue")
             {
                 MessageBox.Show("Pedido ja foi entregue");
                 return;
             }
 
+            AtualizarStatus(pedido.Id, "entregue");
+        }
+
+        void AtualizarStatus(int idPedido, string novoStatus)
+        {
             try
             {
-                SqlConnection con = new SqlConnection(conexao);
-                con.Open();
-                SqlCommand cmd = new SqlCommand("update tb_pedido_certidao set status = 'entregue' where id = " + idPedido, con);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                pedidos.AtualizarStatus(idPedido, novoStatus);
                 CarregarPedidos();
             }
             catch (Exception ex)

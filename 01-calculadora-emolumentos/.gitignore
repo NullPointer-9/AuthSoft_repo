@@ -1,0 +1,12 @@
+# Visual Studio / .NET Framework
+.vs/
+[Bb]in/
+[Oo]bj/
+packages/
+TestResults/
+*.user
+*.suo
+*.cache
+
+# Segredos locais
+.env

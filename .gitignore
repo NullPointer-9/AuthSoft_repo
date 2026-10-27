@@ -1,0 +1,15 @@
+# Visual Studio / .NET Framework
+.vs/
+[Bb]in/
+[Oo]bj/
+packages/
+TestResults/
+*.user
+*.suo
+*.cache
+
+# Configuração local de editor
+.vscode/
+
+# Segredos locais (cada projeto tem um .env.example)
+.env

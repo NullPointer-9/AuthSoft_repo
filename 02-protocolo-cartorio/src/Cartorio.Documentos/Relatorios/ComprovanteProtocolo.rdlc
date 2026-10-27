@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="txtCabecalho">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>CARTÓRIO DE NOTAS (DEMONSTRAÇÃO)</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>9pt</FontSize><Color>#555555</Color></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Parameters!Titulo.Value</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>15pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Protocolo nº " &amp; Parameters!Numero.Value</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>12pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>0cm</Top>
+            <Left>0cm</Left>
+            <Height>2.2cm</Height>
+            <Width>17cm</Width>
+            <Style>
+              <Border><Style>None</Style></Border>
+              <BottomBorder><Color>#333333</Color><Style>Solid</Style><Width>1.5pt</Width></BottomBorder>
+              <PaddingBottom>6pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="txtDados">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun><Value>Cliente: </Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun>
+                  <TextRun><Value>=Parameters!Cliente.Value</Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style></TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun><Value>CPF: </Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun>
+                  <TextRun><Value>=Parameters!Cpf.Value</Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style></TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun><Value>Serviço: </Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun>
+                  <TextRun><Value>=Parameters!Servico.Value</Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style></TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun><Value>Descrição: </Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun>
+                  <TextRun><Value>=Parameters!Descricao.Value</Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style></TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun><Value>Status: </Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun>
+                  <TextRun><Value>=Parameters!Status.Value</Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style></TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun><Value>Abertura: </Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun>
+                  <TextRun><Value>=Parameters!DataAbertura.Value</Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style></TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun><Value>Entrega: </Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun>
+                  <TextRun><Value>=Parameters!DataEntrega.Value</Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style></TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+            </Paragraphs>
+            <Top>2.6cm</Top>
+            <Left>0cm</Left>
+            <Height>5.4cm</Height>
+            <Width>17cm</Width>
+            <Style><Border><Style>None</Style></Border></Style>
+          </Textbox>
+          <Textbox Name="txtDeclaracao">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Parameters!Declaracao.Value</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Left</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>8.4cm</Top>
+            <Left>0cm</Left>
+            <Height>1.6cm</Height>
+            <Width>17cm</Width>
+            <Style>
+              <Border><Color>#333333</Color><Style>Solid</Style></Border>
+              <BackgroundColor>#F0F0F0</BackgroundColor>
+              <PaddingLeft>8pt</PaddingLeft>
+              <PaddingRight>8pt</PaddingRight>
+              <PaddingTop>6pt</PaddingTop>
+              <PaddingBottom>6pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="txtRecebimento">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Recebido por: ______________________________________   Documento: ____________________</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>10pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>10.8cm</Top>
+            <Left>0cm</Left>
+            <Height>0.8cm</Height>
+            <Width>17cm</Width>
+            <Visibility>
+              <Hidden>=Parameters!Tipo.Value &lt;&gt; "Entrega"</Hidden>
+            </Visibility>
+            <Style><Border><Style>None</Style></Border></Style>
+          </Textbox>
+          <Textbox Name="txtRodape">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Emitido em " &amp; Parameters!DataEmissao.Value &amp; ". Documento assinado digitalmente por " &amp; Parameters!Assinante.Value &amp; "."</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>9pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>A autenticidade pode ser conferida no painel de assinaturas do leitor de PDF.</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>8pt</FontSize><FontStyle>Italic</FontStyle><Color>#777777</Color></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>12cm</Top>
+            <Left>0cm</Left>
+            <Height>1.2cm</Height>
+            <Width>17cm</Width>
+            <Style><Border><Style>None</Style></Border></Style>
+          </Textbox>
+        </ReportItems>
+        <Height>13.5cm</Height>
+        <Style />
+      </Body>
+      <Width>17cm</Width>
+      <Page>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>1.9cm</LeftMargin>
+        <RightMargin>1.9cm</RightMargin>
+        <TopMargin>2cm</TopMargin>
+        <BottomMargin>2cm</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="Tipo"><DataType>String</DataType><Prompt>Tipo</Prompt></ReportParameter>
+    <ReportParameter Name="Titulo"><DataType>String</DataType><Prompt>Título</Prompt></ReportParameter>
+    <ReportParameter Name="Numero"><DataType>String</DataType><Prompt>Número</Prompt></ReportParameter>
+    <ReportParameter Name="Cliente"><DataType>String</DataType><Prompt>Cliente</Prompt></ReportParameter>
+    <ReportParameter Name="Cpf"><DataType>String</DataType><Prompt>CPF</Prompt></ReportParameter>
+    <ReportParameter Name="Servico"><DataType>String</DataType><Prompt>Serviço</Prompt></ReportParameter>
+    <ReportParameter Name="Descricao"><DataType>String</DataType><Prompt>Descrição</Prompt></ReportParameter>
+    <ReportParameter Name="Status"><DataType>String</DataType><Prompt>Status</Prompt></ReportParameter>
+    <ReportParameter Name="DataAbertura"><DataType>String</DataType><Prompt>Abertura</Prompt></ReportParameter>
+    <ReportParameter Name="DataEntrega"><DataType>String</DataType><Prompt>Entrega</Prompt></ReportParameter>
+    <ReportParameter Name="Declaracao"><DataType>String</DataType><Prompt>Declaração</Prompt></ReportParameter>
+    <ReportParameter Name="DataEmissao"><DataType>String</DataType><Prompt>Emissão</Prompt></ReportParameter>
+    <ReportParameter Name="Assinante"><DataType>String</DataType><Prompt>Assinante</Prompt></ReportParameter>
+  </ReportParameters>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>2b7d4e90-5a1c-4f3e-8d62-91c0a4e7b3f5</rd:ReportID>
+</Report>

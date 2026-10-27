@@ -1,0 +1,14 @@
+# Visual Studio / .NET Framework
+.vs/
+[Bb]in/
+[Oo]bj/
+packages/
+TestResults/
+*.user
+*.suo
+*.cache
+
+# Segredos locais
+.env
+# Material de preparação: vira o histórico do git via _etapas\criar-historico-git.ps1
+_etapas/

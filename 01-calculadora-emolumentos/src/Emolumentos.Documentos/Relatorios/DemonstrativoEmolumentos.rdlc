@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="txtTitulo">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>DEMONSTRATIVO DE EMOLUMENTOS E CUSTAS</Value>
+                    <Style>
+                      <FontFamily>Arial</FontFamily>
+                      <FontSize>15pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Tabela de " &amp; Parameters!Uf.Value</Value>
+                    <Style>
+                      <FontFamily>Arial</FontFamily>
+                      <FontSize>10pt</FontSize>
+                      <Color>#555555</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>0cm</Top>
+            <Left>0cm</Left>
+            <Height>1.6cm</Height>
+            <Width>17cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <BottomBorder>
+                <Color>#333333</Color>
+                <Style>Solid</Style>
+                <Width>1.5pt</Width>
+              </BottomBorder>
+              <PaddingBottom>6pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="txtDados">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>UF: </Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!Uf.Value</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Tipo de ato: </Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!TipoAto.Value</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Valor do negócio: </Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!ValorNegocio.Value</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Faixa aplicada: </Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!Faixa.Value</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Emolumentos: </Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!Emolumento.Value</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Custas: </Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!Custas.Value</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+            </Paragraphs>
+            <Top>2cm</Top>
+            <Left>0cm</Left>
+            <Height>4.6cm</Height>
+            <Width>17cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Textbox>
+          <Textbox Name="txtTotal">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="TOTAL A RECOLHER: " &amp; Parameters!Total.Value</Value>
+                    <Style>
+                      <FontFamily>Arial</FontFamily>
+                      <FontSize>13pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>7cm</Top>
+            <Left>0cm</Left>
+            <Height>1.1cm</Height>
+            <Width>17cm</Width>
+            <Style>
+              <Border>
+                <Color>#333333</Color>
+                <Style>Solid</Style>
+              </Border>
+              <BackgroundColor>#F0F0F0</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingRight>8pt</PaddingRight>
+            </Style>
+          </Textbox>
+          <Textbox Name="txtRodape">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Emitido em " &amp; Parameters!DataEmissao.Value &amp; ". Documento assinado digitalmente por " &amp; Parameters!Assinante.Value &amp; "."</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>9pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Valores ilustrativos, para fins de demonstração. Consulte a tabela oficial publicada pelo Tribunal de Justiça da UF.</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>8pt</FontSize><FontStyle>Italic</FontStyle><Color>#777777</Color></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>8.8cm</Top>
+            <Left>0cm</Left>
+            <Height>1.4cm</Height>
+            <Width>17cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <Height>10.5cm</Height>
+        <Style />
+      </Body>
+      <Width>17cm</Width>
+      <Page>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>1.9cm</LeftMargin>
+        <RightMargin>1.9cm</RightMargin>
+        <TopMargin>2cm</TopMargin>
+        <BottomMargin>2cm</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="Uf">
+      <DataType>String</DataType>
+      <Prompt>UF</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TipoAto">
+      <DataType>String</DataType>
+      <Prompt>Tipo de ato</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ValorNegocio">
+      <DataType>String</DataType>
+      <Prompt>Valor do negócio</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Faixa">
+      <DataType>String</DataType>
+      <Prompt>Faixa</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Emolumento">
+      <DataType>String</DataType>
+      <Prompt>Emolumentos</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Custas">
+      <DataType>String</DataType>
+      <Prompt>Custas</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Total">
+      <DataType>String</DataType>
+      <Prompt>Total</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="DataEmissao">
+      <DataType>String</DataType>
+      <Prompt>Data de emissão</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Assinante">
+      <DataType>String</DataType>
+      <Prompt>Assinante</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>6f1c2a7e-3b9d-4c51-9a3e-2d8f0b7c4e11</rd:ReportID>
+</Report>

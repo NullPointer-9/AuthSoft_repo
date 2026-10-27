@@ -5,6 +5,20 @@ using Legado.Negocio;
 
 namespace Legado.Testes
 {
+    public class EmissorReciboFalso : Legado.Apresentacao.IEmissorRecibo
+    {
+        public Legado.Apresentacao.ReciboViewModel ReciboEmitido { get; private set; }
+        public string CaminhoEmitido { get; private set; }
+        public int Emissoes { get; private set; }
+
+        public void Emitir(Legado.Apresentacao.ReciboViewModel recibo, string caminhoDestino)
+        {
+            ReciboEmitido = recibo;
+            CaminhoEmitido = caminhoDestino;
+            Emissoes++;
+        }
+    }
+
     public class RelogioFixo : IRelogio
     {
         public DateTime Agora { get; set; } = new DateTime(2026, 10, 27, 14, 30, 0);
@@ -16,6 +30,8 @@ namespace Legado.Testes
 
         public IList<Cliente> BuscarPorNome(string trecho) =>
             Clientes.Where(c => c.Nome.IndexOf(trecho, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+
+        public Cliente ObterPorId(int idCliente) => Clientes.FirstOrDefault(c => c.Id == idCliente);
 
         public bool ExisteCpf(string cpfSomenteDigitos, int ignorarIdCliente) =>
             Clientes.Any(c => ValidadorCpf.Normalizar(c.Cpf) == cpfSomenteDigitos && c.Id != ignorarIdCliente);

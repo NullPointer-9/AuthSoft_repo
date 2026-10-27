@@ -39,6 +39,7 @@ namespace Legado.WinForms
             this.btnMarcarPago = new System.Windows.Forms.Button();
             this.btnEntregar = new System.Windows.Forms.Button();
             this.lblTotal = new System.Windows.Forms.Label();
+            this.btnRecibo = new System.Windows.Forms.Button();
             this.grpClientes.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvClientes)).BeginInit();
             this.grpPedidos.SuspendLayout();
@@ -195,6 +196,7 @@ namespace Legado.WinForms
             this.grpPedidos.Controls.Add(this.btnMarcarPago);
             this.grpPedidos.Controls.Add(this.btnEntregar);
             this.grpPedidos.Controls.Add(this.lblTotal);
+            this.grpPedidos.Controls.Add(this.btnRecibo);
             this.grpPedidos.Location = new System.Drawing.Point(494, 12);
             this.grpPedidos.Name = "grpPedidos";
             this.grpPedidos.Size = new System.Drawing.Size(494, 430);
@@ -265,6 +267,16 @@ namespace Legado.WinForms
             this.btnEntregar.UseVisualStyleBackColor = true;
             this.btnEntregar.Click += new System.EventHandler(this.btnEntregar_Click);
             //
+            // btnRecibo
+            //
+            this.btnRecibo.Location = new System.Drawing.Point(262, 370);
+            this.btnRecibo.Name = "btnRecibo";
+            this.btnRecibo.Size = new System.Drawing.Size(222, 28);
+            this.btnRecibo.TabIndex = 7;
+            this.btnRecibo.Text = "&Recibo assinado (PDF)";
+            this.btnRecibo.UseVisualStyleBackColor = true;
+            this.btnRecibo.Click += new System.EventHandler(this.btnRecibo_Click);
+            //
             // lblTotal
             //
             this.lblTotal.AutoSize = true;
@@ -318,5 +330,6 @@ namespace Legado.WinForms
         private System.Windows.Forms.Button btnMarcarPago;
         private System.Windows.Forms.Button btnEntregar;
         private System.Windows.Forms.Label lblTotal;
+        private System.Windows.Forms.Button btnRecibo;
     }
 }

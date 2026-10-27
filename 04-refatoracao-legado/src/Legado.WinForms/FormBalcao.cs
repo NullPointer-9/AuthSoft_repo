@@ -1,17 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using Legado.Apresentacao;
+using Legado.Documentos;
 using Legado.Negocio;
 
 namespace Legado.WinForms
 {
     public partial class FormBalcao : Form, IBalcaoView
     {
+        private readonly EmissorRecibo _emissorRecibo;
+
+        // Usado apenas pelo designer do Visual Studio.
         public FormBalcao()
         {
             InitializeComponent();
+        }
+
+        /// <param name="emissorRecibo">Usado só para montar a prévia no ReportViewer.</param>
+        public FormBalcao(EmissorRecibo emissorRecibo) : this()
+        {
+            _emissorRecibo = emissorRecibo;
         }
 
         public event EventHandler Carregada;
@@ -23,6 +34,7 @@ namespace Legado.WinForms
         public event EventHandler NovoPedidoSolicitado;
         public event EventHandler MarcarPagoSolicitado;
         public event EventHandler EntregarSolicitado;
+        public event EventHandler ReciboSolicitado;
 
         public string TextoBusca => txtBusca.Text;
         public int? ClienteSelecionadoId => (dgvClientes.CurrentRow?.DataBoundItem as ClienteLinha)?.Id;
@@ -77,6 +89,27 @@ namespace Legado.WinForms
 
         public bool Confirmar(string pergunta) =>
             MessageBox.Show(this, pergunta, "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
+
+        public bool ExibirPreviaRecibo(ReciboViewModel recibo)
+        {
+            using (var previa = new FormPreviaRecibo(_emissorRecibo, recibo))
+                return previa.ShowDialog(this) == DialogResult.OK;
+        }
+
+        public string SolicitarCaminhoDoArquivo(string nomeSugerido)
+        {
+            using (var dialogo = new SaveFileDialog())
+            {
+                dialogo.Title = "Salvar recibo";
+                dialogo.Filter = "Documento PDF (*.pdf)|*.pdf";
+                dialogo.FileName = nomeSugerido;
+                return dialogo.ShowDialog(this) == DialogResult.OK ? dialogo.FileName : null;
+            }
+        }
+
+        public void AbrirDocumento(string caminho) => Process.Start(new ProcessStartInfo(caminho) { UseShellExecute = true });
+
+        private void btnRecibo_Click(object sender, EventArgs e) => ReciboSolicitado?.Invoke(this, EventArgs.Empty);
 
         private void FormBalcao_Load(object sender, EventArgs e) => Carregada?.Invoke(this, EventArgs.Empty);
 

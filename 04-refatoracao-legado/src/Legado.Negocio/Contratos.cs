@@ -24,6 +24,7 @@ namespace Legado.Negocio
     public interface IClienteRepositorio
     {
         IList<Cliente> BuscarPorNome(string trecho);
+        Cliente ObterPorId(int idCliente);
 
         /// <summary>Compara só os dígitos do CPF, porque o banco tem CPFs com e sem pontuação.</summary>
         bool ExisteCpf(string cpfSomenteDigitos, int ignorarIdCliente);

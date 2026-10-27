@@ -97,6 +97,24 @@ namespace Legado.Testes
 
         #endregion
 
+        [DataTestMethod]
+        [DataRow("pago")]
+        [DataRow("Entregue")]
+        public void ObterParaRecibo_PedidoPagoOuEntregue_Libera(string status)
+        {
+            var pedido = _pedidos.Existente(1, status);
+
+            Assert.AreSame(pedido, _servico.ObterParaRecibo(pedido.Id));
+        }
+
+        [TestMethod]
+        public void ObterParaRecibo_PedidoEmAberto_LancaNegocioException()
+        {
+            var pedido = _pedidos.Existente(1, "aberto");
+
+            Assert.ThrowsException<NegocioException>(() => _servico.ObterParaRecibo(pedido.Id));
+        }
+
         [TestMethod]
         public void PedidoInexistente_LancaNegocioException()
         {

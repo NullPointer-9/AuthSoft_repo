@@ -17,6 +17,15 @@ namespace Legado.Testes
         public event EventHandler NovoPedidoSolicitado;
         public event EventHandler MarcarPagoSolicitado;
         public event EventHandler EntregarSolicitado;
+        public event EventHandler ReciboSolicitado;
+
+        /// <summary>Resposta da "janela de prévia": verdadeiro = usuário clicou em Emitir.</summary>
+        public bool RespostaDaPrevia { get; set; } = true;
+        public ReciboViewModel PreviaExibida { get; private set; }
+
+        /// <summary>O que o "diálogo de salvar" devolve; nulo simula cancelar.</summary>
+        public string CaminhoEscolhido { get; set; } = @"C:\temp\recibo.pdf";
+        public string DocumentoAberto { get; private set; }
 
         public string TextoBusca { get; set; } = string.Empty;
         public int? ClienteSelecionadoId { get; set; }
@@ -44,6 +53,16 @@ namespace Legado.Testes
         public void ExibirAviso(string mensagem) => UltimoAviso = mensagem;
         public void ExibirErro(string mensagem) => UltimoErro = mensagem;
         public bool Confirmar(string pergunta) => RespostaConfirmacao;
+
+        public bool ExibirPreviaRecibo(ReciboViewModel recibo)
+        {
+            PreviaExibida = recibo;
+            return RespostaDaPrevia;
+        }
+
+        public string SolicitarCaminhoDoArquivo(string nomeSugerido) => CaminhoEscolhido;
+        public void AbrirDocumento(string caminho) => DocumentoAberto = caminho;
+        public void Recibo() => ReciboSolicitado?.Invoke(this, EventArgs.Empty);
 
         public void Carregar() => Carregada?.Invoke(this, EventArgs.Empty);
         public void Buscar() => BuscarClientesSolicitado?.Invoke(this, EventArgs.Empty);

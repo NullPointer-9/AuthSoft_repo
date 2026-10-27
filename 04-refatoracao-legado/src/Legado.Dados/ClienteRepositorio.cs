@@ -40,6 +40,29 @@ namespace Legado.Dados
             return clientes;
         }
 
+        public Cliente ObterPorId(int idCliente)
+        {
+            using (var con = new SqlConnection(_conexao))
+            using (var cmd = new SqlCommand("select id, nome, cpf, telefone from tb_cliente where id = @id", con))
+            {
+                cmd.Parameters.Add("@id", SqlDbType.Int).Value = idCliente;
+                con.Open();
+                using (var leitor = cmd.ExecuteReader())
+                {
+                    if (!leitor.Read())
+                        return null;
+
+                    return new Cliente
+                    {
+                        Id = leitor.GetInt32(0),
+                        Nome = leitor.IsDBNull(1) ? string.Empty : leitor.GetString(1),
+                        Cpf = leitor.IsDBNull(2) ? string.Empty : leitor.GetString(2),
+                        Telefone = leitor.IsDBNull(3) ? string.Empty : leitor.GetString(3)
+                    };
+                }
+            }
+        }
+
         public bool ExisteCpf(string cpfSomenteDigitos, int ignorarIdCliente)
         {
             // O banco tem "529.982.247-25" e "52998224725": compara sem a pontuação.

@@ -10,15 +10,17 @@ namespace Legado.Apresentacao
         private readonly IBalcaoView _view;
         private readonly ClienteServico _clientes;
         private readonly PedidoServico _pedidos;
+        private readonly IEmissorRecibo _emissorRecibo;
 
         private IList<Cliente> _clientesExibidos = new List<Cliente>();
         private int _idCliente;
 
-        public BalcaoPresenter(IBalcaoView view, ClienteServico clientes, PedidoServico pedidos)
+        public BalcaoPresenter(IBalcaoView view, ClienteServico clientes, PedidoServico pedidos, IEmissorRecibo emissorRecibo)
         {
             _view = view ?? throw new ArgumentNullException(nameof(view));
             _clientes = clientes ?? throw new ArgumentNullException(nameof(clientes));
             _pedidos = pedidos ?? throw new ArgumentNullException(nameof(pedidos));
+            _emissorRecibo = emissorRecibo ?? throw new ArgumentNullException(nameof(emissorRecibo));
 
             _view.Carregada += (s, e) => Executar(Carregar);
             _view.BuscarClientesSolicitado += (s, e) => Executar(() => BuscarClientes(_view.TextoBusca));
@@ -29,6 +31,7 @@ namespace Legado.Apresentacao
             _view.NovoPedidoSolicitado += (s, e) => Executar(NovoPedido);
             _view.MarcarPagoSolicitado += (s, e) => Executar(() => AlterarPedido(_pedidos.MarcarPago));
             _view.EntregarSolicitado += (s, e) => Executar(() => AlterarPedido(_pedidos.Entregar));
+            _view.ReciboSolicitado += (s, e) => Executar(EmitirRecibo);
         }
 
         /// <summary>Id do cliente em edição; 0 quando é um cadastro novo.</summary>
@@ -120,6 +123,30 @@ namespace Legado.Apresentacao
 
             acao(idPedido.Value);
             CarregarPedidos();
+        }
+
+        /// <summary>Prévia → escolher onde salvar → PDF assinado → abrir.</summary>
+        private void EmitirRecibo()
+        {
+            var idPedido = _view.PedidoSelecionadoId;
+            if (!idPedido.HasValue)
+            {
+                _view.ExibirAviso("Selecione um pedido.");
+                return;
+            }
+
+            var pedido = _pedidos.ObterParaRecibo(idPedido.Value);
+            var recibo = new ReciboViewModel(pedido, _clientes.Obter(pedido.IdCliente));
+
+            if (!_view.ExibirPreviaRecibo(recibo))
+                return;
+
+            var caminho = _view.SolicitarCaminhoDoArquivo(recibo.NomeArquivoSugerido);
+            if (string.IsNullOrWhiteSpace(caminho))
+                return;
+
+            _emissorRecibo.Emitir(recibo, caminho);
+            _view.AbrirDocumento(caminho);
         }
 
         private void CarregarPedidos()

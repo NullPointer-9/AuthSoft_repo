@@ -16,6 +16,14 @@ namespace Legado.Negocio
 
         public IList<Cliente> Buscar(string trechoDoNome) => _clientes.BuscarPorNome(trechoDoNome ?? string.Empty);
 
+        public Cliente Obter(int idCliente)
+        {
+            var cliente = _clientes.ObterPorId(idCliente);
+            if (cliente == null)
+                throw new NegocioException("Cliente não encontrado.");
+            return cliente;
+        }
+
         /// <summary>Id 0 cadastra; outro valor altera.</summary>
         public Cliente Salvar(int id, string nome, string cpf, string telefone)
         {

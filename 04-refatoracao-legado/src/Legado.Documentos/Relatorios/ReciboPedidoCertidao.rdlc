@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="txtCabecalho">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>BALCÃO DE CERTIDÕES (DEMONSTRAÇÃO)</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>9pt</FontSize><Color>#555555</Color></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>RECIBO DE PEDIDO DE CERTIDÃO</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>15pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Pedido nº " &amp; Parameters!NumeroPedido.Value</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>12pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>0cm</Top>
+            <Left>0cm</Left>
+            <Height>2.2cm</Height>
+            <Width>17cm</Width>
+            <Style>
+              <Border><Style>None</Style></Border>
+              <BottomBorder><Color>#333333</Color><Style>Solid</Style><Width>1.5pt</Width></BottomBorder>
+              <PaddingBottom>6pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="txtDeclaracao">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Recebemos de " &amp; Parameters!Cliente.Value &amp; ", CPF " &amp; Parameters!Cpf.Value &amp; ", a importância de " &amp; Parameters!Valor.Value &amp; ", referente ao pedido nº " &amp; Parameters!NumeroPedido.Value &amp; " (" &amp; Parameters!Tipo.Value &amp; ")."</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>12pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>2.8cm</Top>
+            <Left>0cm</Left>
+            <Height>1.8cm</Height>
+            <Width>17cm</Width>
+            <Style>
+              <Border><Style>None</Style></Border>
+            </Style>
+          </Textbox>
+          <Textbox Name="txtDados">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun><Value>Certidão: </Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun>
+                  <TextRun><Value>=Parameters!Tipo.Value</Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style></TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun><Value>Data do pedido: </Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun>
+                  <TextRun><Value>=Parameters!DataPedido.Value</Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style></TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun><Value>Situação: </Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun>
+                  <TextRun><Value>=Parameters!Status.Value</Value><Style><FontFamily>Arial</FontFamily><FontSize>11pt</FontSize></Style></TextRun>
+                </TextRuns>
+                <Style /><SpaceAfter>6pt</SpaceAfter>
+              </Paragraph>
+            </Paragraphs>
+            <Top>5cm</Top>
+            <Left>0cm</Left>
+            <Height>2.4cm</Height>
+            <Width>17cm</Width>
+            <Style><Border><Style>None</Style></Border></Style>
+          </Textbox>
+          <Textbox Name="txtValor">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="VALOR RECEBIDO: " &amp; Parameters!Valor.Value</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>13pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Right</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>7.8cm</Top>
+            <Left>0cm</Left>
+            <Height>1.1cm</Height>
+            <Width>17cm</Width>
+            <Style>
+              <Border><Color>#333333</Color><Style>Solid</Style></Border>
+              <BackgroundColor>#F0F0F0</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingRight>8pt</PaddingRight>
+            </Style>
+          </Textbox>
+          <Textbox Name="txtRodape">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Emitido em " &amp; Parameters!DataEmissao.Value &amp; ". Documento assinado digitalmente por " &amp; Parameters!Assinante.Value &amp; "."</Value>
+                    <Style><FontFamily>Arial</FontFamily><FontSize>9pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>9.5cm</Top>
+            <Left>0cm</Left>
+            <Height>0.8cm</Height>
+            <Width>17cm</Width>
+            <Style><Border><Style>None</Style></Border></Style>
+          </Textbox>
+        </ReportItems>
+        <Height>10.5cm</Height>
+        <Style />
+      </Body>
+      <Width>17cm</Width>
+      <Page>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>1.9cm</LeftMargin>
+        <RightMargin>1.9cm</RightMargin>
+        <TopMargin>2cm</TopMargin>
+        <BottomMargin>2cm</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="NumeroPedido"><DataType>String</DataType><Prompt>Pedido</Prompt></ReportParameter>
+    <ReportParameter Name="Cliente"><DataType>String</DataType><Prompt>Cliente</Prompt></ReportParameter>
+    <ReportParameter Name="Cpf"><DataType>String</DataType><Prompt>CPF</Prompt></ReportParameter>
+    <ReportParameter Name="Tipo"><DataType>String</DataType><Prompt>Tipo</Prompt></ReportParameter>
+    <ReportParameter Name="Valor"><DataType>String</DataType><Prompt>Valor</Prompt></ReportParameter>
+    <ReportParameter Name="Status"><DataType>String</DataType><Prompt>Status</Prompt></ReportParameter>
+    <ReportParameter Name="DataPedido"><DataType>String</DataType><Prompt>Data do pedido</Prompt></ReportParameter>
+    <ReportParameter Name="DataEmissao"><DataType>String</DataType><Prompt>Emissão</Prompt></ReportParameter>
+    <ReportParameter Name="Assinante"><DataType>String</DataType><Prompt>Assinante</Prompt></ReportParameter>
+  </ReportParameters>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>9e4a1c27-6d3b-4f80-b2e5-7c1d0a8f3b64</rd:ReportID>
+</Report>

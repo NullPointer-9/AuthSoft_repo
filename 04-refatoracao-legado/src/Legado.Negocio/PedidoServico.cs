@@ -55,6 +55,15 @@ namespace Legado.Negocio
             _pedidos.AtualizarStatus(idPedido, StatusPedido.Entregue);
         }
 
+        /// <summary>O recibo comprova pagamento: só existe para pedido pago ou entregue.</summary>
+        public PedidoCertidao ObterParaRecibo(int idPedido)
+        {
+            var pedido = Obter(idPedido);
+            if (pedido.Status == StatusPedido.Aberto)
+                throw new NegocioException("O recibo só pode ser emitido depois que o pedido for pago.");
+            return pedido;
+        }
+
         /// <summary>Soma dos pedidos em aberto do cliente.</summary>
         public decimal TotalEmAberto(int idCliente)
         {

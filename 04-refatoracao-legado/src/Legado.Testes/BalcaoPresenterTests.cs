@@ -15,6 +15,7 @@ namespace Legado.Testes
         private BalcaoViewFalsa _view;
         private ClienteRepositorioEmMemoria _clientes;
         private PedidoRepositorioEmMemoria _pedidos;
+        private EmissorReciboFalso _emissor;
         private BalcaoPresenter _presenter;
 
         [TestInitialize]
@@ -23,10 +24,12 @@ namespace Legado.Testes
             _view = new BalcaoViewFalsa();
             _clientes = new ClienteRepositorioEmMemoria();
             _pedidos = new PedidoRepositorioEmMemoria();
+            _emissor = new EmissorReciboFalso();
             _presenter = new BalcaoPresenter(
                 _view,
                 new ClienteServico(_clientes, _pedidos),
-                new PedidoServico(_pedidos, new RelogioFixo()));
+                new PedidoServico(_pedidos, new RelogioFixo()),
+                _emissor);
 
             _clientes.Clientes.Add(new Cliente { Id = 1, Nome = "MARIA APARECIDA SOUZA", Cpf = "529.982.247-25", Telefone = "11988881111" });
             _clientes.Clientes.Add(new Cliente { Id = 2, Nome = "joao carlos pereira", Cpf = "11144477735", Telefone = "" });
@@ -175,6 +178,81 @@ namespace Legado.Testes
 
             Assert.AreEqual("Selecione um pedido.", _view.UltimoAviso);
         }
+
+        #region Recibo
+
+        private PedidoCertidao PedidoPagoSelecionado()
+        {
+            var pedido = _pedidos.Existente(1, "pago", 68.85m);
+            _view.Carregar();
+            _view.SelecionarCliente(1);
+            _view.PedidoSelecionadoId = pedido.Id;
+            return pedido;
+        }
+
+        [TestMethod]
+        public void Recibo_MostraPreviaComDadosDoClienteEDoPedido()
+        {
+            PedidoPagoSelecionado();
+            _view.RespostaDaPrevia = false;
+
+            _view.Recibo();
+
+            Assert.AreEqual("MARIA APARECIDA SOUZA", _view.PreviaExibida.Cliente);
+            Assert.AreEqual("529.982.247-25", _view.PreviaExibida.Cpf);
+            Assert.AreEqual(Moeda(68.85m), _view.PreviaExibida.Valor);
+            Assert.AreEqual(0, _emissor.Emissoes, "fechar a prévia não gera arquivo");
+        }
+
+        [TestMethod]
+        public void Recibo_ConfirmadoNaPrevia_EmiteNoCaminhoEscolhidoEAbre()
+        {
+            PedidoPagoSelecionado();
+
+            _view.Recibo();
+
+            Assert.AreEqual(1, _emissor.Emissoes);
+            Assert.AreEqual(@"C:\temp\recibo.pdf", _emissor.CaminhoEmitido);
+            Assert.AreEqual(@"C:\temp\recibo.pdf", _view.DocumentoAberto);
+        }
+
+        [TestMethod]
+        public void Recibo_CancelarODialogoDeSalvar_NaoEmite()
+        {
+            PedidoPagoSelecionado();
+            _view.CaminhoEscolhido = null;
+
+            _view.Recibo();
+
+            Assert.AreEqual(0, _emissor.Emissoes);
+            Assert.IsNull(_view.DocumentoAberto);
+        }
+
+        [TestMethod]
+        public void Recibo_PedidoEmAberto_AvisaENaoMostraPrevia()
+        {
+            var pedido = _pedidos.Existente(1, "aberto");
+            _view.Carregar();
+            _view.SelecionarCliente(1);
+            _view.PedidoSelecionadoId = pedido.Id;
+
+            _view.Recibo();
+
+            StringAssert.Contains(_view.UltimoAviso, "depois que o pedido for pago");
+            Assert.IsNull(_view.PreviaExibida);
+        }
+
+        [TestMethod]
+        public void Recibo_SemPedidoSelecionado_Avisa()
+        {
+            _view.Carregar();
+
+            _view.Recibo();
+
+            Assert.AreEqual("Selecione um pedido.", _view.UltimoAviso);
+        }
+
+        #endregion
 
         [TestMethod]
         public void ErroInesperado_ViraMensagemDeErroSemDerrubarATela()

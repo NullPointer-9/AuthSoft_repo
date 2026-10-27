@@ -15,6 +15,7 @@ namespace Legado.Apresentacao
         event EventHandler NovoPedidoSolicitado;
         event EventHandler MarcarPagoSolicitado;
         event EventHandler EntregarSolicitado;
+        event EventHandler ReciboSolicitado;
 
         string TextoBusca { get; }
         int? ClienteSelecionadoId { get; }
@@ -35,5 +36,13 @@ namespace Legado.Apresentacao
         void ExibirAviso(string mensagem);
         void ExibirErro(string mensagem);
         bool Confirmar(string pergunta);
+
+        /// <summary>Mostra a prévia (sem assinatura). Verdadeiro se o usuário pediu para emitir.</summary>
+        bool ExibirPreviaRecibo(ReciboViewModel recibo);
+
+        /// <summary>Pergunta onde salvar. Nulo se o usuário cancelar.</summary>
+        string SolicitarCaminhoDoArquivo(string nomeSugerido);
+
+        void AbrirDocumento(string caminho);
     }
 }
